@@ -9,3 +9,6 @@ let g:openclaw_loaded = 1
 
 " Setup the plugin with default configuration
 call openclaw#setup()
+
+" Setup extended functionality
+call openclaw#setup_extended()

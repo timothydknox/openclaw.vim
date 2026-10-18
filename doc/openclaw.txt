@@ -1,0 +1,202 @@
+*openclaw.txt*        Vim plugin for OpenClaw CLI integration
+
+==============================================================================
+CONTENTS                                                    *openclaw-contents*
+
+ 1. Introduction                           |openclaw-introduction|
+ 2. Installation                           |openclaw-installation|
+ 3. Configuration                          |openclaw-configuration|
+ 4. Commands                               |openclaw-commands|
+ 5. Functions                              |openclaw-functions|
+ 6. Examples                               |openclaw-examples|
+
+==============================================================================
+INTRODUCTION                                        *openclaw-introduction*
+
+The openclaw.vim plugin provides integration with the OpenClaw CLI for Vim.
+It allows you to control your OpenClaw gateway directly from Vim and offers
+enhanced coding assistance features.
+
+This is a Vim port of the original Neovim plugin https://github.com/njg7194/openclaw.nvim,
+extended with additional AI session management capabilities.
+
+==============================================================================
+INSTALLATION                                        *openclaw-installation*
+
+Install using your preferred package manager:
+
+Using vim-plug:
+>
+  Plug 'openclaw/openclaw.vim'
+<
+
+Using packadd (Vim's built-in package manager):
+>
+  mkdir -p ~/.vim/pack/plugins/start/openclaw.vim
+  cd ~/.vim/pack/plugins/start/openclaw.vim
+  git clone https://github.com/openclaw/openclaw.vim .
+<
+
+==============================================================================
+CONFIGURATION                                    *openclaw-configuration*
+
+The plugin can be configured by calling the setup function in your .vimrc:
+>
+  call openclaw#setup({
+      \ 'auto_connect': 1,
+      \ 'status_refresh_ms': 3000,
+      \ 'command': 'openclaw'
+      \ })
+<
+
+Available configuration options:
+  auto_connect          (number)  Auto-connect to gateway on startup (default: 0)
+  status_refresh_ms     (number)  Status refresh interval in milliseconds (default: 5000)
+  command               (string)  OpenClaw CLI command (default: 'openclaw')
+  notify_on_status_change (number) Show notifications on status changes (default: 1)
+
+==============================================================================
+COMMANDS                                                *openclaw-commands*
+
+All commands are available in Vim's command mode.
+
+:OpenClawStatus                                             *:OpenClawStatus*
+  Check the status of the OpenClaw gateway.
+
+:OpenClawConnect                                           *:OpenClawConnect*
+  Start the OpenClaw gateway.
+
+:OpenClawDisconnect                                       *:OpenClawDisconnect*
+  Stop the OpenClaw gateway.
+
+:OpenClawRestart                                           *:OpenClawRestart*
+  Restart the OpenClaw gateway.
+
+:OpenClawSetup                                               *:OpenClawSetup*
+  Run the OpenClaw setup wizard in a terminal.
+
+:OpenClawDoctor                                           *:OpenClawDoctor*
+  Run the OpenClaw doctor command in a terminal.
+
+:OpenClawDashboard                                       *:OpenClawDashboard*
+  Open the OpenClaw dashboard in a browser.
+
+:OpenClawTUI                                                   *:OpenClawTUI*
+  Open the OpenClaw TUI (terminal UI) in a terminal.
+
+:OpenClawLogs                                                   *:OpenClawLogs*
+  View OpenClaw logs in a terminal.
+
+:OpenClawCreateSession                                 *:OpenClawCreateSession*
+  Create a new session with workspace context from the current file.
+  Example:
+>
+  :OpenClawCreateSession
+  :OpenClawCreateSession {'model': 'gpt-4', 'name': 'debug-session'}
+<
+
+:OpenClawSendToSession                                 *:OpenClawSendToSession*
+  Send a message to the active session.
+  Example:
+>
+  :OpenClawSendToSession "Explain this function"
+  :OpenClawSendToSession "Help me debug this code"
+<
+
+:OpenClawSessionInfo                                   *:OpenClawSessionInfo*
+  Show information about the current session.
+
+:OpenClawListModels                                   *:OpenClawListModels*
+  List all available AI models.
+
+:OpenClawSwitchSession                                 *:OpenClawSwitchSession*
+  Switch to a different session.
+  Example:
+>
+  :OpenClawSwitchSession session-123
+<
+
+:OpenClawSessionHistory                               *:OpenClawSessionHistory*
+  Show the conversation history for the current session.
+
+==============================================================================
+FUNCTIONS                                              *openclaw-functions*
+
+openclaw#status()                                           *openclaw#status*
+  Check the status of the OpenClaw gateway and return [success, result].
+
+openclaw#connect()                                         *openclaw#connect*
+  Start the OpenClaw gateway.
+
+openclaw#disconnect()                                     *openclaw#disconnect*
+  Stop the OpenClaw gateway.
+
+openclaw#restart()                                         *openclaw#restart*
+  Restart the OpenClaw gateway.
+
+openclaw#setup({opts})                                   *openclaw#setup*
+  Setup the plugin with optional configuration.
+  Example:
+>
+  call openclaw#setup({'auto_connect': 1})
+<
+
+openclaw#create_session({opts})                       *openclaw#create_session*
+  Create a new session with optional configuration.
+  Example:
+>
+  call openclaw#create_session({'model': 'gpt-4'})
+<
+
+openclaw#send_to_session({message})                 *openclaw#send_to_session*
+  Send a message to the active session.
+
+openclaw#get_session_info()                         *openclaw#get_session_info*
+  Get information about the current session.
+
+openclaw#list_models()                               *openclaw#list_models*
+  List available AI models.
+
+openclaw#switch_session({session_id})             *openclaw#switch_session*
+  Switch to a different session.
+
+openclaw#get_session_history()                   *openclaw#get_session_history*
+  Get the conversation history for the current session.
+
+==============================================================================
+EXAMPLES                                                *openclaw-examples*
+
+Basic setup:
+>
+  call openclaw#setup()
+<
+
+Setup with auto-connect and custom command:
+>
+  call openclaw#setup({
+      \ 'auto_connect': 1,
+      \ 'command': '/usr/local/bin/openclaw'
+      \ })
+<
+
+Create a session for current file with specific model:
+>
+  :OpenClawCreateSession {'model': 'gpt-4-turbo'}
+<
+
+Ask for help with current code:
+>
+  :OpenClawSendToSession "Explain this function in detail"
+<
+
+Switch to a different session:
+>
+  :OpenClawSwitchSession my-project-session
+<
+
+==============================================================================
+LICENSE                                                    *openclaw-license*
+
+This plugin is licensed under the BSD-3-Clause-Open-MPI License.
+
+vim:tw=78:ts=8:ft=help:norl:

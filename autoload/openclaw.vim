@@ -204,3 +204,142 @@ endfunction
 function! s:periodic_status_check(timer)
     call openclaw#status()
 endfunction
+
+" Create a new session with workspace context based on current file
+function! openclaw#create_session(...)
+    let file_path = expand('%:p')
+    let file_name = expand('%:t')
+    let file_dir = expand('%:p:h')
+    
+    " Get optional configuration for the session
+    let opts = {}
+    if a:0 > 0
+        let opts = a:1
+    endif
+    
+    " Prepare session creation command
+    let cmd = g:openclaw_config.command . ' session create'
+    
+    " Add file context if available
+    if !empty(file_path)
+        let cmd .= ' --file ' . shellescape(file_path)
+    endif
+    
+    " Add model selection if specified
+    if has_key(opts, 'model')
+        let cmd .= ' --model ' . shellescape(opts.model)
+    endif
+    
+    " Add custom session name if specified
+    if has_key(opts, 'name')
+        let cmd .= ' --name ' . shellescape(opts.name)
+    endif
+    
+    " Add workspace directory if specified
+    if has_key(opts, 'workspace_dir')
+        let cmd .= ' --workspace ' . shellescape(opts.workspace_dir)
+    endif
+    
+    echo "🦞 Creating session for " . file_name
+    let result = system(cmd)
+    let success = v:shell_error == 0
+    
+    if success
+        echo "🦞 Session created successfully"
+        echo result
+    else
+        echohl ErrorMsg | echom "🦞 Failed to create session: " . (result != '' ? result : 'unknown error') | echohl None
+    endif
+    
+    return [success, result]
+endfunction
+
+" Send a message to the current session
+function! openclaw#send_to_session(message)
+    let cmd = g:openclaw_config.command . ' session send ' . shellescape(a:message)
+    let result = system(cmd)
+    let success = v:shell_error == 0
+    
+    if success
+        echo "🦞 Message sent to session"
+        echo result
+    else
+        echohl ErrorMsg | echom "🦞 Failed to send message: " . (result != '' ? result : 'unknown error') | echohl None
+    endif
+    
+    return [success, result]
+endfunction
+
+" Get current session information
+function! openclaw#get_session_info()
+    let cmd = g:openclaw_config.command . ' session info'
+    let result = system(cmd)
+    let success = v:shell_error == 0
+    
+    if success
+        echo "🦞 Current session info:"
+        echo result
+    else
+        echohl ErrorMsg | echom "🦞 Failed to get session info: " . (result != '' ? result : 'unknown error') | echohl None
+    endif
+    
+    return [success, result]
+endfunction
+
+" List available models
+function! openclaw#list_models()
+    let cmd = g:openclaw_config.command . ' model list'
+    let result = system(cmd)
+    let success = v:shell_error == 0
+    
+    if success
+        echo "🦞 Available models:"
+        echo result
+    else
+        echohl ErrorMsg | echom "🦞 Failed to list models: " . (result != '' ? result : 'unknown error') | echohl None
+    endif
+    
+    return [success, result]
+endfunction
+
+" Switch to a specific session
+function! openclaw#switch_session(session_id)
+    let cmd = g:openclaw_config.command . ' session switch ' . shellescape(a:session_id)
+    let result = system(cmd)
+    let success = v:shell_error == 0
+    
+    if success
+        echo "🦞 Switched to session " . a:session_id
+        echo result
+    else
+        echohl ErrorMsg | echom "🦞 Failed to switch session: " . (result != '' ? result : 'unknown error') | echohl None
+    endif
+    
+    return [success, result]
+endfunction
+
+" Get session history
+function! openclaw#get_session_history()
+    let cmd = g:openclaw_config.command . ' session history'
+    let result = system(cmd)
+    let success = v:shell_error == 0
+    
+    if success
+        echo "🦞 Session history:"
+        echo result
+    else
+        echohl ErrorMsg | echom "🦞 Failed to get session history: " . (result != '' ? result : 'unknown error') | echohl None
+    endif
+    
+    return [success, result]
+endfunction
+
+" Create commands for the new functionality
+function! openclaw#setup_extended()
+    command! -nargs=0 OpenClawCreateSession call openclaw#create_session()
+    command! -nargs=1 OpenClawSendToSession call openclaw#send_to_session(<f-args>)
+    command! -nargs=0 OpenClawSessionInfo call openclaw#get_session_info()
+    command! -nargs=0 OpenClawListModels call openclaw#list_models()
+    command! -nargs=1 OpenClawSwitchSession call openclaw#switch_session(<f-args>)
+    command! -nargs=0 OpenClawSessionHistory call openclaw#get_session_history()
+endfunction
