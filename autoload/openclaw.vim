@@ -150,11 +150,17 @@ function! openclaw#get_state()
     return deepcopy(g:openclaw_state)
 endfunction
 
-" Setup function
-function! openclaw#setup(opts)
+" Setup function - handles optional configuration
+function! openclaw#setup(...)
+    " Handle optional argument for configuration
+    let opts = {}
+    if a:0 > 0
+        let opts = a:1
+    endif
+    
     " Merge options with default config
-    if exists('a:opts')
-        for [key, value] in items(a:opts)
+    if !empty(opts)
+        for [key, value] in items(opts)
             let g:openclaw_config[key] = value
         endfor
     endif
